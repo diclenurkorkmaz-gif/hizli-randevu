@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doktorlarımız - Hastane Randevu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="doctor-page">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Hızlı Linkler -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <span class="sidebar-icon">🔗</span>
+                    Hızlı Linkler
+                </h3>
+                <div class="category-item" onclick="window.location.href='doktor.html'">
+                    <span class="category-icon">👨‍⚕️</span>
+                    <span class="category-text">Doktorlarımız</span>
+                </div>
+                <div class="category-item" onclick="window.location.href='randevu-al.html'">
+                    <span class="category-icon">📅</span>
+                    <span class="category-text">Randevu Al</span>
+                </div>
+                <div class="category-item" onclick="window.location.href='randevularim.html'">
+                    <span class="category-icon">📋</span>
+                    <span class="category-text">Randevularım</span>
+                </div>
+                <div class="category-item" onclick="
+                    const storedUser = localStorage.getItem('user');
+                    if (storedUser) {
+                        window.location.href = 'hesabim.html';
+                    } else {
+                        alert('Hesabınızı görüntülemek için giriş yapın!');
+                        window.location.href = 'giris.html';
+                    }
+                ">
+                    <span class="category-icon">👤</span>
+                    <span class="category-text">Hesabım</span>
+                </div>
+                <div class="category-item" onclick="
+                    localStorage.removeItem('user');
+                    window.location.href = 'giris.html';
+                ">
+                    <span class="category-icon">🚪</span>
+                    <span class="category-text">Çıkış Yap</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="doctor-header">
+                <h1>Doktorlarımız</h1>
+                <p>Deneyimli ve uzman doktor kadromuzla hizmetinizdeyiz</p>
+            </div>
+
+            <!-- Branş Filtresi -->
+            <div class="specialty-filter">
+                <h2>Branş Seçin</h2>
+                <div class="specialty-buttons">
+                    <button class="specialty-btn active" data-specialty="all">Tümü</button>
+                    <button class="specialty-btn" data-specialty="dahiliye">Dahiliye</button>
+                    <button class="specialty-btn" data-specialty="kardiyoloji">Kardiyoloji</button>
+                    <button class="specialty-btn" data-specialty="goz">Göz Doktoru</button>
+                    <button class="specialty-btn" data-specialty="ortopedi">Ortopedi</button>
+                    <button class="specialty-btn" data-specialty="noroloji">Nöroloji</button>
+                    <button class="specialty-btn" data-specialty="dermatoloji">Dermatoloji</button>
+                    <button class="specialty-btn" data-specialty="psikiyatri">Psikiyatri</button>
+                </div>
+            </div>
+
+            <!-- Doktor Listesi -->
+            <div class="doctors-container">
+            <div class="doctors-grid" id="doctorsGrid">
+                <!-- Dahiliye Doktorları -->
+                <div class="doctor-card" data-specialty="dahiliye">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Ahmet Yılmaz</h3>
+                    <p class="doctor-specialty">Dahiliye Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>15 yıl deneyim</p>
+                        <p>İstanbul Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Ahmet Yılmaz')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="dahiliye">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Fatma Demir</h3>
+                    <p class="doctor-specialty">Dahiliye Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>12 yıl deneyim</p>
+                        <p>Hacettepe Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.9)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Fatma Demir')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="dahiliye">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Mehmet Kaya</h3>
+                    <p class="doctor-specialty">Dahiliye Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>18 yıl deneyim</p>
+                        <p>Ankara Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Mehmet Kaya')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="dahiliye">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Ayşe Özkan</h3>
+                    <p class="doctor-specialty">Dahiliye Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>10 yıl deneyim</p>
+                        <p>Ege Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.6)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Ayşe Özkan')">Randevu Al</button>
+                </div>
+
+                <!-- Kardiyoloji Doktorları -->
+                <div class="doctor-card" data-specialty="kardiyoloji">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Mustafa Çelik</h3>
+                    <p class="doctor-specialty">Kardiyoloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>20 yıl deneyim</p>
+                        <p>İstanbul Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.9)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Mustafa Çelik')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="kardiyoloji">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Zeynep Arslan</h3>
+                    <p class="doctor-specialty">Kardiyoloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>14 yıl deneyim</p>
+                        <p>Hacettepe Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Zeynep Arslan')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="kardiyoloji">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Emre Şahin</h3>
+                    <p class="doctor-specialty">Kardiyoloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>16 yıl deneyim</p>
+                        <p>Ankara Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Emre Şahin')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="kardiyoloji">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Sibel Yıldız</h3>
+                    <p class="doctor-specialty">Kardiyoloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>11 yıl deneyim</p>
+                        <p>Ege Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.6)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Sibel Yıldız')">Randevu Al</button>
+                </div>
+
+                <!-- Göz Doktorları -->
+                <div class="doctor-card" data-specialty="goz">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Ali Veli</h3>
+                    <p class="doctor-specialty">Göz Hastalıkları Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>13 yıl deneyim</p>
+                        <p>İstanbul Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Ali Veli')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="goz">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Elif Korkmaz</h3>
+                    <p class="doctor-specialty">Göz Hastalıkları Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>9 yıl deneyim</p>
+                        <p>Hacettepe Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.9)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Elif Korkmaz')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="goz">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Burak Öztürk</h3>
+                    <p class="doctor-specialty">Göz Hastalıkları Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>17 yıl deneyim</p>
+                        <p>Ankara Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Burak Öztürk')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="goz">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Gülay Aktaş</h3>
+                    <p class="doctor-specialty">Göz Hastalıkları Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>12 yıl deneyim</p>
+                        <p>Ege Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.6)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Gülay Aktaş')">Randevu Al</button>
+                </div>
+
+                <!-- Ortopedi Doktorları -->
+                <div class="doctor-card" data-specialty="ortopedi">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Cem Yılmaz</h3>
+                    <p class="doctor-specialty">Ortopedi Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>19 yıl deneyim</p>
+                        <p>İstanbul Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Cem Yılmaz')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="ortopedi">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Deniz Özkan</h3>
+                    <p class="doctor-specialty">Ortopedi Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>14 yıl deneyim</p>
+                        <p>Hacettepe Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Deniz Özkan')">Randevu Al</button>
+                </div>
+
+                <!-- Nöroloji Doktorları -->
+                <div class="doctor-card" data-specialty="noroloji">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Hakan Demir</h3>
+                    <p class="doctor-specialty">Nöroloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>16 yıl deneyim</p>
+                        <p>Ankara Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.9)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Hakan Demir')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="noroloji">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. İpek Kaya</h3>
+                    <p class="doctor-specialty">Nöroloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>11 yıl deneyim</p>
+                        <p>Ege Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.6)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. İpek Kaya')">Randevu Al</button>
+                </div>
+
+                <!-- Dermatoloji Doktorları -->
+                <div class="doctor-card" data-specialty="dermatoloji">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Murat Şahin</h3>
+                    <p class="doctor-specialty">Dermatoloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>13 yıl deneyim</p>
+                        <p>İstanbul Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.8)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Murat Şahin')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="dermatoloji">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Özlem Arslan</h3>
+                    <p class="doctor-specialty">Dermatoloji Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>10 yıl deneyim</p>
+                        <p>Hacettepe Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.7)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Özlem Arslan')">Randevu Al</button>
+                </div>
+
+                <!-- Psikiyatri Doktorları -->
+                <div class="doctor-card" data-specialty="psikiyatri">
+                    <div class="doctor-avatar">👨‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Serkan Yıldız</h3>
+                    <p class="doctor-specialty">Psikiyatri Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>15 yıl deneyim</p>
+                        <p>Ankara Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.9)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Serkan Yıldız')">Randevu Al</button>
+                </div>
+
+                <div class="doctor-card" data-specialty="psikiyatri">
+                    <div class="doctor-avatar">👩‍⚕️</div>
+                    <h3 class="doctor-name">Dr. Tuğba Öztürk</h3>
+                    <p class="doctor-specialty">Psikiyatri Uzmanı</p>
+                    <div class="doctor-info">
+                        <p>12 yıl deneyim</p>
+                        <p>Ege Üniversitesi</p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="star">★</span>
+                        <span class="rating-text">(4.6)</span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. Tuğba Öztürk')">Randevu Al</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">🏥</div>
+                <div class="footer-text">
+                    <strong>Korkmaz Bilişim Paketi</strong> ile yapılmıştır
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-project">Hastane Randevu Sistemi</div>
+                <div class="footer-year">© 2025</div>
+            </div>
+        </div>
+    </footer>
+    <script src="main.js"></script>
+</body>
+</html>

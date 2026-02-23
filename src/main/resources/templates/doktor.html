@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="tr" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Doktorlar - Randevu Sistemi</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <span class="sidebar-icon">🔗</span>
+                Hızlı Linkler
+            </h3>
+            <div class="category-item" onclick="window.location.href='doktor.html'">
+                <span class="category-icon">👨‍⚕️</span>
+                <span class="category-text">Doktorlarımız</span>
+            </div>
+            <div class="category-item" onclick="alert('Randevu alma sistemi yakında aktif olacak!')">
+                <span class="category-icon">📅</span>
+                <span class="category-text">Randevu Al</span>
+            </div>
+            <div class="category-item" onclick="window.location.href='randevularim.html'">
+                <span class="category-icon">📋</span>
+                <span class="category-text">Randevularım</span>
+            </div>
+            <div class="category-item" onclick="alert('Hesabınızı görüntülemek için giriş yapın!')">
+                <span class="category-icon">👤</span>
+                <span class="category-text">Hesabım</span>
+            </div>
+            <div class="category-item" onclick="window.location.href='giris.html'">
+                <span class="category-icon">🚪</span>
+                <span class="category-text">Çıkış Yap</span>
+            </div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Header -->
+        <div class="doctor-header">
+            <h1>Doktorlarımız</h1>
+            <p>Deneyimli ve uzman doktor kadromuzla hizmetinizdeyiz</p>
+        </div>
+
+        <!-- Branş Filtresi -->
+        <div class="specialty-filter">
+            <h2>Branş Seçin</h2>
+            <div class="specialty-buttons">
+                <button class="specialty-btn active" data-specialty="all">Tümü</button>
+                <button class="specialty-btn" data-specialty="Dahiliye">Dahiliye</button>
+                <button class="specialty-btn" data-specialty="Kardiyoloji">Kardiyoloji</button>
+                <button class="specialty-btn" data-specialty="Göz Hastalıkları">Göz Doktoru</button>
+                <button class="specialty-btn" data-specialty="Ortopedi">Ortopedi</button>
+                <button class="specialty-btn" data-specialty="Nöroloji">Nöroloji</button>
+                <button class="specialty-btn" data-specialty="Dermatoloji">Dermatoloji</button>
+                <button class="specialty-btn" data-specialty="Psikiyatri">Psikiyatri</button>
+            </div>
+        </div>
+
+        <!-- Doktor Listesi -->
+        <div class="doctors-container">
+            <div class="doctors-grid" id="doctorsGrid">
+                <div th:each="doctor : ${doctors}" class="doctor-card" th:data-specialty="${doctor.specialty}">
+                    <div class="doctor-avatar" th:text="${doctor.avatar}"></div>
+                    <h3 class="doctor-name" th:text="'Dr. ' + ${doctor.firstName} + ' ' + ${doctor.lastName}"></h3>
+                    <p class="doctor-specialty" th:text="${doctor.specialty} + ' Uzmanı'"></p>
+                    <div class="doctor-info">
+                        <p th:text="${doctor.experienceYears} + ' yıl deneyim'"></p>
+                        <p th:text="${doctor.university}"></p>
+                    </div>
+                    <div class="doctor-rating">
+                        <span class="rating-text" th:text="'(' + ${doctor.rating} + ')'"></span>
+                    </div>
+                    <button class="appointment-btn" onclick="bookAppointment('Dr. ' + '${doctor.firstName}' + ' ' + '${doctor.lastName}')">Randevu Al</button>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">🏥</div>
+                <div class="footer-text">
+                    <strong>Korkmaz Bilişim Paketi</strong> ile yapılmıştır
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-project">Hastane Randevu Sistemi</div>
+                <div class="footer-year">© 2025</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/main.js"></script>
+</body>
+</html>

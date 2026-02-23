@@ -1,0 +1,705 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randevularım - Hastane Randevu Sistemi</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="doctor-page">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Hızlı Linkler -->
+            <div class="sidebar-section">
+                <h3 class="sidebar-title">
+                    <span class="sidebar-icon">🔗</span>
+                    Hızlı Linkler
+                </h3>
+                <div class="category-item" onclick="window.location.href='doktor.html'">
+                    <span class="category-icon">👨‍⚕️</span>
+                    <span class="category-text">Doktorlarımız</span>
+                </div>
+                <div class="category-item" onclick="window.location.href='randevu-al.html'">
+                    <span class="category-icon">📅</span>
+                    <span class="category-text">Randevu Al</span>
+                </div>
+                <div class="category-item" onclick="window.location.href='randevularim.html'">
+                    <span class="category-icon">📋</span>
+                    <span class="category-text">Randevularım</span>
+                </div>
+                <div class="category-item" onclick="
+                    const storedUser = localStorage.getItem('user');
+                    if (storedUser) {
+                        window.location.href = 'hesabim.html';
+                    } else {
+                        showMessage('warning', 'Giriş Gerekli', 'Hesabınızı görüntülemek için giriş yapın!');
+                        setTimeout(() => {
+                        window.location.href = 'giris.html';
+                        }, 2000);
+                    }
+                ">
+                    <span class="category-icon">👤</span>
+                    <span class="category-text">Hesabım</span>
+                </div>
+                <div class="category-item" onclick="
+                    localStorage.removeItem('user');
+                    window.location.href = 'giris.html';
+                ">
+                    <span class="category-icon">🚪</span>
+                    <span class="category-text">Çıkış Yap</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ana İçerik -->
+        <div class="main-content">
+            <!-- Sayfa Başlığı -->
+            <div class="doctor-header">
+                <h1>📋 Randevularım</h1>
+                <p>Alınan randevularınızı görüntüleyin ve yönetin</p>
+            </div>
+
+            <!-- Randevu Filtreleri -->
+            <div class="appointment-filters">
+                <h2>Randevu Filtreleri</h2>
+                <div class="filter-buttons">
+                    <button class="filter-btn active" onclick="filterAppointments('all')">Tümü</button>
+                    <button class="filter-btn" onclick="filterAppointments('upcoming')">Yaklaşan</button>
+                    <button class="filter-btn" onclick="filterAppointments('past')">Geçmiş</button>
+                    <button class="filter-btn" onclick="filterAppointments('cancelled')">İptal Edilen</button>
+                    <button class="filter-btn" onclick="filterAppointments('relatives')">Yakınlarım</button>
+                </div>
+            </div>
+
+            <!-- Randevu Listesi -->
+            <div class="appointments-container">
+                <div class="appointments-list" id="appointmentsList">
+                    <!-- Randevular buraya dinamik olarak eklenecek -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mesaj Container -->
+    <div class="message-container" id="messageContainer" style="display: none;">
+        <div class="message-card">
+            <button class="message-close-btn" id="messageCloseBtn" onclick="closeMessage()">×</button>
+            <div class="message-icon" id="messageIcon">
+                <span id="messageIconText">✅</span>
+            </div>
+            <h3 class="message-title" id="messageTitle">Başarılı!</h3>
+            <p class="message-text" id="messageText">İşlem başarıyla tamamlandı.</p>
+            <div class="message-buttons" id="messageButtons" style="display: none;">
+                <button class="message-btn confirm-btn" id="confirmBtn">Evet</button>
+                <button class="message-btn cancel-btn" id="cancelBtn">Hayır</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">🏥</div>
+                <div class="footer-text">
+                    <strong>Hastane Randevu Sistemi</strong> - Sağlığınız bizim önceliğimiz
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-project">Korkmaz Bilişim Paketi ile yapılmıştır</div>
+                <div class="footer-year">© 2025</div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        let allAppointments = []; // Tüm randevuları saklamak için
+
+        // Sayfa yüklendiğinde randevuları API'den çek
+        document.addEventListener('DOMContentLoaded', function() {
+            // Önce giriş kontrolü yap
+            checkUserLogin();
+            // Geçmiş randevuları otomatik olarak güncelle
+            updatePastAppointments();
+        });
+
+        // Geçmiş randevuları otomatik olarak güncelle
+        async function updatePastAppointments() {
+            try {
+                // Önce backend'i dene
+                const response = await fetch('/api/appointments/update-past-appointments', {
+                    method: 'POST'
+                });
+                
+                if (response.ok) {
+                    const result = await response.text();
+                    console.log('Geçmiş randevular güncellendi:', result);
+                    
+                    // Randevuları yeniden yükle
+                    setTimeout(() => {
+                        loadAppointments();
+                    }, 2000);
+                } else {
+                    throw new Error('Backend hatası');
+                }
+            } catch (error) {
+                console.error('Backend bağlantısı başarısız, frontend güncelleme yapılıyor:', error);
+                
+                // Backend çalışmıyorsa frontend'de güncelle
+                updatePastAppointmentsFrontend();
+            }
+        }
+
+        // Frontend'de geçmiş randevuları güncelle
+        function updatePastAppointmentsFrontend() {
+            const now = new Date();
+            const today = now.toISOString().split('T')[0]; // YYYY-MM-DD formatı
+            const currentTime = now.toTimeString().split(' ')[0]; // HH:MM:SS formatı
+            
+            console.log('Frontend güncelleme - Bugün:', today, 'Şu anki saat:', currentTime);
+            
+            let updatedCount = 0;
+            
+            // Tüm randevuları kontrol et
+            allAppointments.forEach(appointment => {
+                const appointmentDate = appointment.date; // YYYY-MM-DD formatı
+                const appointmentTime = appointment.time; // HH:MM formatı
+                
+                console.log('Randevu kontrol:', {
+                    id: appointment.id,
+                    date: appointmentDate,
+                    time: appointmentTime,
+                    status: appointment.status
+                });
+                
+                // Randevu tarihi geçmişse veya bugünse ama saati geçmişse
+                if ((appointmentDate < today || 
+                     (appointmentDate === today && appointmentTime < currentTime)) &&
+                    (appointment.status === 'upcoming' || appointment.status === 'past')) {
+                    
+                    console.log('Randevu güncelleniyor:', appointment.id, '-> completed');
+                    appointment.status = 'completed';
+                    updatedCount++;
+                }
+            });
+            
+            if (updatedCount > 0) {
+                // Randevuları yeniden göster
+                displayAppointments(allAppointments);
+            }
+        }
+
+        // Kullanıcı giriş kontrolü
+        function checkUserLogin() {
+            const storedUser = localStorage.getItem('user');
+            if (!storedUser) {
+                showMessage('warning', 'Giriş Gerekli', 'Bu sayfayı görüntülemek için giriş yapmanız gerekiyor!');
+                setTimeout(() => {
+                window.location.href = 'giris.html';
+                }, 2000);
+                return;
+            }
+            
+            // Giriş yapmışsa randevuları yükle
+            loadAppointments();
+        }
+
+        // API'den randevuları yükle
+        async function loadAppointments() {
+            try {
+                console.log('Randevular yükleniyor...');
+                
+                // Giriş yapmış kullanıcının bilgilerini al
+                const storedUser = localStorage.getItem('user');
+                if (!storedUser) {
+                    console.error('Kullanıcı bilgisi bulunamadı');
+                    showMessage('error', 'Hata', 'Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.');
+                    setTimeout(() => {
+                    window.location.href = 'giris.html';
+                    }, 2000);
+                    return;
+                }
+                
+                const user = JSON.parse(storedUser);
+                console.log('Giriş yapmış kullanıcı:', user);
+                console.log('Kullanıcı TC No:', user.tcNo);
+                
+                // Kullanıcının TC kimlik numarasına göre randevuları getir
+                const apiUrl = `/api/appointments/patient/${user.tcNo}`;
+                console.log('API URL:', apiUrl);
+                
+                let response;
+                let appointments;
+                
+                try {
+                    response = await fetch(apiUrl);
+                    console.log('API Response Status:', response.status);
+                    console.log('API Response OK:', response.ok);
+                    
+                    if (!response.ok) {
+                        if (response.status === 404) {
+                            console.log('Bu kullanıcı için randevu bulunamadı');
+                            allAppointments = [];
+                            displayAppointments(allAppointments);
+                            return;
+                        } else {
+                            throw new Error(`HTTP error! status: ${response.status}`);
+                        }
+                    }
+                    
+                    appointments = await response.json();
+                } catch (apiError) {
+                    console.error('Patient endpoint hatası:', apiError);
+                    console.log('Fallback: Tüm randevuları getir ve filtrele...');
+                    
+                    // Fallback: Tüm randevuları getir ve frontend'de filtrele
+                    const allResponse = await fetch('/api/appointments');
+                    if (!allResponse.ok) {
+                        throw new Error(`Fallback API error! status: ${allResponse.status}`);
+                    }
+                    
+                    const allAppointments = await allResponse.json();
+                    appointments = allAppointments.filter(apt => apt.patientTc === user.tcNo);
+                    console.log('Filtrelenmiş randevular:', appointments);
+                }
+                console.log('API\'den gelen randevular:', appointments);
+                
+                if (!appointments || appointments.length === 0) {
+                    console.log('Randevu bulunamadı');
+                    allAppointments = [];
+                    displayAppointments(allAppointments);
+                    return;
+                }
+                
+                // Randevuları frontend formatına çevir
+                allAppointments = appointments.map(apt => ({
+                    id: apt.id,
+                    date: apt.appointmentDate,
+                    time: apt.appointmentTime,
+                    specialty: apt.doctor.specialty,
+                    doctor: `Dr. ${apt.doctor.firstName} ${apt.doctor.lastName}`,
+                    status: getAppointmentStatus(apt),
+                    patientName: apt.patientName,
+                    phone: apt.patientPhone,
+                    complaint: apt.complaint,
+                    appointmentFor: apt.appointmentFor,
+                    relativeName: apt.relativeName,
+                    relativeTc: apt.relativeTc,
+                    relativePhone: apt.relativePhone,
+                    relativeEmail: apt.relativeEmail
+                }));
+                
+                console.log('Formatlanmış randevular:', allAppointments);
+                
+                // Randevuları göster
+                displayAppointments(allAppointments);
+                
+            } catch (error) {
+                console.error('Randevular yüklenirken hata:', error);
+                console.error('Hata detayı:', error.message);
+                console.error('Hata stack:', error.stack);
+                
+                // Daha detaylı hata mesajı
+                let errorMessage = 'Randevular yüklenirken bir hata oluştu.';
+                if (error.message.includes('fetch')) {
+                    errorMessage += '\n\nSunucuya bağlanılamıyor. Lütfen internet bağlantınızı kontrol edin.';
+                } else if (error.message.includes('JSON')) {
+                    errorMessage += '\n\nSunucudan gelen veri formatı hatalı.';
+                } else {
+                    errorMessage += `\n\nHata: ${error.message}`;
+                }
+                
+                showMessage('error', 'Hata', errorMessage);
+                
+                // Hata durumunda boş liste göster
+                allAppointments = [];
+                displayAppointments(allAppointments);
+            }
+        }
+
+        // Randevu durumunu belirle
+        function getAppointmentStatus(appointment) {
+            const today = new Date();
+            // Bugünün başlangıcını al (00:00:00)
+            today.setHours(0, 0, 0, 0);
+            
+            const appointmentDate = new Date(appointment.appointmentDate);
+            // Randevu tarihinin başlangıcını al (00:00:00)
+            appointmentDate.setHours(0, 0, 0, 0);
+            
+            // 1 ay sonrasını hesapla
+            const oneMonthLater = new Date(today);
+            oneMonthLater.setMonth(oneMonthLater.getMonth() + 1);
+            
+            if (appointment.status === 'CANCELLED') {
+                return 'cancelled';
+            } else if (appointmentDate < today) {
+                return 'past';
+            } else if (appointmentDate <= oneMonthLater) {
+                return 'upcoming';  // 1 ay içindeki randevular
+            } else {
+                return 'future';    // 1 aydan sonraki randevular
+            }
+        }
+
+        // Randevuları göster
+        function displayAppointments(appointmentsToShow) {
+            const appointmentsList = document.getElementById('appointmentsList');
+            
+            if (appointmentsToShow.length === 0) {
+                appointmentsList.innerHTML = `
+                    <div class="no-appointments">
+                        <div class="no-appointments-icon">📅</div>
+                        <h3>Randevu Bulunamadı</h3>
+                        <p>Bu kategoride randevu bulunmamaktadır.</p>
+                        <button class="btn btn-primary" onclick="window.location.href='randevu-al.html'">Yeni Randevu Al</button>
+                    </div>
+                `;
+                return;
+            }
+
+            let html = '';
+            appointmentsToShow.forEach(appointment => {
+                const statusClass = getStatusClass(appointment.status);
+                const statusText = getStatusText(appointment.status);
+                const statusIcon = getStatusIcon(appointment.status);
+                
+                html += `
+                    <div class="appointment-card ${statusClass}">
+                        <div class="appointment-header">
+                            <div class="appointment-status">
+                                <span class="status-icon">${statusIcon}</span>
+                                <span class="status-text">${statusText}</span>
+                            </div>
+                            <div class="appointment-date">
+                                <span class="date-text">${formatDate(appointment.date)}</span>
+                                <span class="time-text">${appointment.time}</span>
+                            </div>
+                        </div>
+                        
+                        <div class="appointment-content">
+                            <div class="appointment-info">
+                                <div class="info-item">
+                                    <span class="info-label">👨‍⚕️ Doktor:</span>
+                                    <span class="info-value">${appointment.doctor}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">🏥 Branş:</span>
+                                    <span class="info-value">${appointment.specialty}</span>
+                                </div>
+                                ${!appointment.appointmentFor || appointment.appointmentFor === 'self' ? `
+                                <div class="info-item">
+                                    <span class="info-label">👤 Hasta:</span>
+                                    <span class="info-value">${appointment.patientName}</span>
+                                </div>
+                                ` : ''}
+                                ${appointment.appointmentFor && appointment.appointmentFor !== 'self' ? `
+                                <div class="info-item">
+                                    <span class="info-label">👨‍👩‍👧‍👦 Randevu Kimin İçin:</span>
+                                    <span class="info-value">${getAppointmentForText(appointment.appointmentFor)}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">👤 Yakın Kişi:</span>
+                                    <span class="info-value">${appointment.relativeName || '-'}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">🆔 Yakın Kişi TC:</span>
+                                    <span class="info-value">${appointment.relativeTc || '-'}</span>
+                                </div>
+                                ` : ''}
+                                <div class="info-item">
+                                    <span class="info-label">📞 Telefon:</span>
+                                    <span class="info-value">${appointment.phone}</span>
+                                </div>
+                                <div class="info-item">
+                                    <span class="info-label">📝 Şikayet:</span>
+                                    <span class="info-value">${appointment.complaint}</span>
+                                </div>
+                            </div>
+                            
+                            <div class="appointment-actions">
+                                ${appointment.status === 'upcoming' ? `
+                                    <button class="btn btn-danger" onclick="cancelAppointment(${appointment.id})">
+                                        ❌ İptal Et
+                                    </button>
+                                ` : appointment.status === 'completed' ? `
+                                    <span class="status-badge completed">✅ Tamamlandı</span>
+                                    <button class="btn btn-primary" onclick="viewAppointmentDetails(${appointment.id})">
+                                        👁️ Detayları Gör
+                                    </button>
+                                ` : appointment.status === 'cancelled' ? `
+                                    <span class="status-badge cancelled">❌ İptal Edildi</span>
+                                    <button class="btn btn-primary" onclick="rebookAppointment(${appointment.id})">
+                                        🔄 Yeniden Randevu Al
+                                    </button>
+                                ` : appointment.status === 'past' ? `
+                                    <button class="btn btn-primary" onclick="viewAppointmentDetails(${appointment.id})">
+                                        👁️ Detayları Gör
+                                    </button>
+                                ` : `
+                                    <button class="btn btn-primary" onclick="rebookAppointment(${appointment.id})">
+                                        🔄 Yeniden Randevu Al
+                                    </button>
+                                `}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            appointmentsList.innerHTML = html;
+        }
+
+        // Randevu filtreleme
+        function filterAppointments(filter) {
+            // Tüm filtre butonlarından active class'ını kaldır
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            
+            // Tıklanan butona active class'ını ekle
+            const clickedButton = event.target;
+            clickedButton.classList.add('active');
+            
+            let filteredAppointments = allAppointments;
+            
+            if (filter === 'upcoming') {
+                filteredAppointments = allAppointments.filter(apt => apt.status === 'upcoming');
+            } else if (filter === 'past') {
+                filteredAppointments = allAppointments.filter(apt => apt.status === 'past');
+            } else if (filter === 'cancelled') {
+                filteredAppointments = allAppointments.filter(apt => apt.status === 'cancelled');
+            } else if (filter === 'relatives') {
+                filteredAppointments = allAppointments.filter(apt => apt.appointmentFor && apt.appointmentFor !== 'self');
+            }
+            
+            displayAppointments(filteredAppointments);
+        }
+
+        // Durum sınıfı al
+        function getStatusClass(status) {
+            switch(status) {
+                case 'upcoming': return 'status-upcoming';
+                case 'past': return 'status-past';
+                case 'cancelled': return 'status-cancelled';
+                case 'future': return 'status-future';
+                default: return '';
+            }
+        }
+
+        // Durum metni al
+        function getStatusText(status) {
+            switch(status) {
+                case 'upcoming': return 'Yaklaşan (1 ay içinde)';
+                case 'past': return 'Tamamlandı';
+                case 'cancelled': return 'İptal Edildi';
+                case 'future': return 'Gelecek (1 aydan sonra)';
+                default: return '';
+            }
+        }
+
+        // Durum ikonu al
+        function getStatusIcon(status) {
+            switch(status) {
+                case 'upcoming': return '⏰';
+                case 'past': return '✅';
+                case 'cancelled': return '❌';
+                case 'future': return '📅';
+                default: return '';
+            }
+        }
+
+        // Tarih formatla
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            const options = { 
+                year: 'numeric',
+                month: 'long',
+                day: 'numeric',
+                weekday: 'long'
+            };
+            return date.toLocaleDateString('tr-TR', options);
+        }
+
+        // Yakınlık derecesi metnini al
+        function getAppointmentForText(value) {
+            switch(value) {
+                case 'self': return 'Kendim için';
+                case 'mother': return 'Annem için';
+                case 'father': return 'Babam için';
+                case 'daughter': return 'Kızım için';
+                case 'son': return 'Oğlum için';
+                default: return value;
+            }
+        }
+
+        // Randevu iptal et
+        function cancelAppointment(appointmentId) {
+            console.log('cancelAppointment çağrıldı, ID:', appointmentId);
+            showConfirmMessage(
+                'Randevu İptali', 
+                'Bu randevuyu iptal etmek istediğinizden emin misiniz?',
+                () => {
+                    console.log('Onay verildi, randevu iptal ediliyor...');
+                // API'ye iptal isteği gönder
+                fetch(`/api/appointments/${appointmentId}/status?status=CANCELLED`, {
+                    method: 'PUT'
+                })
+                .then(response => {
+                    if (response.ok) {
+                        // Başarılı olursa randevuları yeniden yükle
+                        loadAppointments();
+                            showMessage('success', 'Başarılı', 'Randevu başarıyla iptal edildi.');
+                    } else {
+                            showMessage('error', 'Hata', 'Randevu iptal edilirken bir hata oluştu.');
+                    }
+                })
+                .catch(error => {
+                    console.error('Hata:', error);
+                        showMessage('error', 'Hata', 'Randevu iptal edilirken bir hata oluştu.');
+                });
+            }
+            );
+        }
+
+        // Randevu detaylarını gör
+        function viewAppointmentDetails(appointmentId) {
+            const appointment = allAppointments.find(apt => apt.id === appointmentId);
+            if (appointment) {
+                const details = `👨‍⚕️ Doktor: ${appointment.doctor}\n\n🏥 Branş: ${appointment.specialty}\n\n📅 Tarih: ${formatDate(appointment.date)}\n\n🕐 Saat: ${appointment.time}\n\n📝 Şikayet: ${appointment.complaint}`;
+                showAppointmentDetailsMessage('📋 Randevu Detayları', details);
+            }
+        }
+
+        // Yeniden randevu al
+        function rebookAppointment(appointmentId) {
+            showConfirmMessage(
+                'Yeniden Randevu', 
+                'Bu randevu için yeni bir randevu almak istediğinizden emin misiniz?',
+                () => {
+                window.location.href = 'randevu-al.html';
+                }
+            );
+        }
+
+        // Randevu detayları için özel mesaj fonksiyonu (ortada büyük)
+        function showAppointmentDetailsMessage(title, text) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageIcon = document.getElementById('messageIconText');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageText = document.getElementById('messageText');
+            const messageButtons = document.getElementById('messageButtons');
+            
+            // Butonları gizle
+            messageButtons.style.display = 'none';
+            
+            // Özel stil için class ekle
+            messageContainer.className = 'message-container info appointment-details';
+            messageIcon.textContent = 'ℹ️';
+            
+            // Mesaj içeriğini ayarla
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            
+            // Mesajı göster
+            messageContainer.style.display = 'flex';
+        }
+
+        // Mesaj gösterme fonksiyonu
+        function showMessage(type, title, text) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageIcon = document.getElementById('messageIconText');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageText = document.getElementById('messageText');
+            const messageButtons = document.getElementById('messageButtons');
+            
+            // Butonları gizle
+            messageButtons.style.display = 'none';
+            
+            // Mesaj tipine göre ikon ve stil ayarla
+            if (type === 'success') {
+                messageIcon.textContent = '✅';
+                messageContainer.className = 'message-container success';
+            } else if (type === 'error') {
+                messageIcon.textContent = '❌';
+                messageContainer.className = 'message-container error';
+            } else if (type === 'info') {
+                messageIcon.textContent = 'ℹ️';
+                messageContainer.className = 'message-container info';
+            } else if (type === 'warning') {
+                messageIcon.textContent = '⚠️';
+                messageContainer.className = 'message-container warning';
+            }
+            
+            // Mesaj içeriğini ayarla
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            
+            // Mesajı göster
+            messageContainer.style.display = 'flex';
+            
+            // Sadece hata mesajları için 3 saniye sonra otomatik kapat (info mesajları için kapatma)
+            if (type === 'error') {
+                setTimeout(() => {
+                    messageContainer.style.display = 'none';
+                }, 3000);
+            }
+        }
+
+        // Mesaj kapatma fonksiyonu
+        function closeMessage() {
+            const messageContainer = document.getElementById('messageContainer');
+            messageContainer.style.display = 'none';
+        }
+
+        // Onay mesajı gösterme fonksiyonu
+        function showConfirmMessage(title, text, onConfirm) {
+            console.log('showConfirmMessage çağrıldı:', title, text);
+            const messageContainer = document.getElementById('messageContainer');
+            const messageIcon = document.getElementById('messageIconText');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageText = document.getElementById('messageText');
+            const messageButtons = document.getElementById('messageButtons');
+            const confirmBtn = document.getElementById('confirmBtn');
+            const cancelBtn = document.getElementById('cancelBtn');
+            
+            console.log('Elementler bulundu:', {
+                messageContainer: !!messageContainer,
+                messageIcon: !!messageIcon,
+                messageTitle: !!messageTitle,
+                messageText: !!messageText,
+                messageButtons: !!messageButtons,
+                confirmBtn: !!confirmBtn,
+                cancelBtn: !!cancelBtn
+            });
+            
+            // Onay ikonu ve stil
+            messageIcon.textContent = '❓';
+            messageContainer.className = 'message-container confirm';
+            
+            // Mesaj içeriğini ayarla
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            
+            // Butonları göster
+            messageButtons.style.display = 'flex';
+            
+            // Mesajı göster
+            messageContainer.style.display = 'flex';
+            console.log('Mesaj gösterildi, display:', messageContainer.style.display);
+            
+            // Buton event listener'larını temizle ve yeniden ekle
+            confirmBtn.onclick = () => {
+                messageContainer.style.display = 'none';
+                onConfirm();
+            };
+            
+            cancelBtn.onclick = () => {
+                messageContainer.style.display = 'none';
+            };
+        }
+    </script>
+</body>
+</html>

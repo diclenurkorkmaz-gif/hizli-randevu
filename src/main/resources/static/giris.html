@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hastane Randevu - Giriş</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Sol Taraf - Logo ve Mavi Gradient -->
+        <div class="left-section">
+            <div class="logo-container">
+                <div class="logo">
+                    <div class="logo-icon">🏥</div>
+                </div>
+                <h1 class="logo-text">Hastane Randevu</h1>
+                <p class="logo-subtitle">Sağlığınız İçin Buradayız</p>
+            </div>
+        </div>
+
+        <!-- Sağ Taraf - Giriş Formu -->
+        <div class="right-section">
+            <div class="login-form-container">
+                <h2 class="form-title">Giriş Yap</h2>
+                <form>
+                    <div class="form-group">
+                        <label for="username"> TC Kimlik No</label>
+                        <input type="text" id="username" name="username" placeholder="Kullanıcı adınızı girin" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Şifre</label>
+                        <input type="password" id="password" name="password" placeholder="Şifrenizi girin" required>
+                    </div>
+                    <button type="submit" class="login-btn">Giriş Yap</button>
+                    <div class="forgot-password">
+                        <a href="#">Şifremi Unuttum</a>
+                    </div>
+                    <div class="signup-link">
+                        <p>Henüz üye değil misiniz? <a href="#" onclick="showSignupForm()">Üye ol.</a></p>
+                    </div>
+                </form>
+                
+                <!-- Mesaj Container -->
+                <div class="message-container" id="messageContainer" style="display: none;">
+                    <div class="message-card">
+                        <div class="message-icon" id="messageIcon">
+                            <span id="messageIconText">✅</span>
+                        </div>
+                        <h3 class="message-title" id="messageTitle">Giriş Başarılı!</h3>
+                        <p class="message-text" id="messageText">Randevu sayfasına yönlendiriliyorsunuz...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">🏥</div>
+                <div class="footer-text">
+                    <strong>Korkmaz Bilişim Paketi</strong> ile yapılmıştır
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-project">Hastane Randevu Sistemi</div>
+                <div class="footer-year">© 2025</div>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Form gönderimi için giriş işlemi
+        document.querySelector('form').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const tcNo = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (!tcNo || !password) {
+                showMessage('warning', 'Eksik Bilgi', 'Lütfen tüm alanları doldurun.');
+                return;
+            }
+
+            // TC Kimlik No kontrolü
+            if (tcNo.length !== 11 || !/^\d+$/.test(tcNo)) {
+                showMessage('error', 'TC Kimlik No Hatası', 'TC Kimlik No 11 haneli olmalı ve sadece rakam içermelidir!');
+                return;
+            }
+
+            try {
+                // API'ye giriş isteği gönder (TC Kimlik No ile)
+                const response = await fetch('/api/users/login-tc', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tcNo: tcNo,
+                        password: password
+                    })
+                });
+
+                const result = await response.json();
+                console.log('Giriş API yanıtı:', result);
+
+                if (result.success) {
+                    showMessage('success', 'Giriş Başarılı!', 'Randevu sayfasına yönlendiriliyorsunuz...');
+                    // Kullanıcı bilgilerini localStorage'a kaydet
+                    localStorage.setItem('user', JSON.stringify(result.user));
+                    // Randevu sayfasına yönlendir
+                    setTimeout(() => {
+                        window.location.href = 'randevu-al.html';
+                    }, 2000);
+                } else {
+                    showMessage('error', 'Giriş Hatası', 'Bilgilerinizi kontrol ediniz');
+                }
+            } catch (error) {
+                console.error('Giriş hatası:', error);
+                showMessage('error', 'Bağlantı Hatası', 'Giriş sırasında bir hata oluştu. Lütfen tekrar deneyin.');
+            }
+        });
+
+        // Input focus animasyonları
+        document.querySelectorAll('input').forEach(input => {
+            input.addEventListener('focus', function() {
+                this.parentElement.style.transform = 'scale(1.02)';
+            });
+            
+            input.addEventListener('blur', function() {
+                this.parentElement.style.transform = 'scale(1)';
+            });
+        });
+
+        // TC Kimlik No sadece rakam girişi
+        document.getElementById('username').addEventListener('input', function(e) {
+            e.target.value = e.target.value.replace(/[^0-9]/g, '');
+        });
+
+        // Üye ol formu gösterme fonksiyonu
+        function showSignupForm() {
+            window.location.href = 'uye-ol.html';
+        }
+
+        // Mesaj gösterme fonksiyonu
+        function showMessage(type, title, text) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageIcon = document.getElementById('messageIconText');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageText = document.getElementById('messageText');
+            
+            // Mesaj tipine göre ikon ve stil ayarla
+            if (type === 'success') {
+                messageIcon.textContent = '✅';
+                messageContainer.className = 'message-container success';
+            } else if (type === 'error') {
+                messageIcon.textContent = '❌';
+                messageContainer.className = 'message-container error';
+            } else if (type === 'warning') {
+                messageIcon.textContent = '⚠️';
+                messageContainer.className = 'message-container warning';
+            }
+            
+            // Mesaj içeriğini ayarla
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            
+            // Mesajı göster
+            messageContainer.style.display = 'flex';
+            
+            // Hata ve uyarı mesajları için 3 saniye sonra otomatik kapat
+            if (type === 'error' || type === 'warning') {
+                setTimeout(() => {
+                    messageContainer.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>

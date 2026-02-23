@@ -1,0 +1,1066 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Randevu Al - Hastane Randevu</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="appointment-page">
+    <aside class="sidebar">
+        <div class="sidebar-section">
+            <h3 class="sidebar-title">
+                <span class="sidebar-icon">🔗</span>
+                Hızlı Linkler
+            </h3>
+            <div class="category-item" onclick="window.location.href='doktor.html'">
+                <span class="category-icon">👨‍⚕️</span>
+                <span class="category-text">Doktorlarımız</span>
+            </div>
+            <div class="category-item" onclick="window.location.href='randevu-al.html'">
+                <span class="category-icon">📅</span>
+                <span class="category-text">Randevu Al</span>
+            </div>
+            <div class="category-item" onclick="window.location.href='randevularim.html'">
+                <span class="category-icon">📋</span>
+                <span class="category-text">Randevularım</span>
+            </div>
+            <div class="category-item" onclick="
+                const storedUser = localStorage.getItem('user');
+                if (storedUser) {
+                    window.location.href = 'hesabim.html';
+                } else {
+                    alert('Hesabınızı görüntülemek için giriş yapın!');
+                    window.location.href = 'giris.html';
+                }
+            ">
+                <span class="category-icon">👤</span>
+                <span class="category-text">Hesabım</span>
+            </div>
+                <div class="category-item" onclick="
+                    localStorage.removeItem('user');
+                    window.location.href = 'giris.html';
+                ">
+                    <span class="category-icon">🚪</span>
+                    <span class="category-text">Çıkış Yap</span>
+                </div>
+        </div>
+    </aside>
+
+        <!-- Ana İçerik -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="doctor-header">
+                <h1>Randevu Al</h1>
+                <p>Kolay ve hızlı randevu alma sistemi</p>
+            </div>
+
+            <!-- Randevu Formu -->
+            <div class="appointment-form-container">
+                <h2>Randevu Bilgileri</h2>
+                
+                <!-- Adım 1: Branş Seçimi -->
+                <div class="form-step active" id="step1">
+                    <h3>1. Branş Seçiniz</h3>
+                    <div class="specialty-selection">
+                        <div class="specialty-card" data-specialty="dahiliye" onclick="selectSpecialty('dahiliye')">
+                            <div class="specialty-icon">🫀</div>
+                            <h4>Dahiliye</h4>
+                            <p>İç hastalıkları uzmanı</p>
+                        </div>
+                        <div class="specialty-card" data-specialty="kardiyoloji" onclick="selectSpecialty('kardiyoloji')">
+                            <div class="specialty-icon">❤️</div>
+                            <h4>Kardiyoloji</h4>
+                            <p>Kalp ve damar hastalıkları</p>
+                        </div>
+                        <div class="specialty-card" data-specialty="goz" onclick="selectSpecialty('goz')">
+                            <div class="specialty-icon">👁️</div>
+                            <h4>Göz Doktoru</h4>
+                            <p>Göz hastalıkları uzmanı</p>
+                        </div>
+                        <div class="specialty-card" data-specialty="ortopedi" onclick="selectSpecialty('ortopedi')">
+                            <div class="specialty-icon">🦴</div>
+                            <h4>Ortopedi</h4>
+                            <p>Kemik ve eklem hastalıkları</p>
+                        </div>
+                        <div class="specialty-card" data-specialty="noroloji" onclick="selectSpecialty('noroloji')">
+                            <div class="specialty-icon">🧠</div>
+                            <h4>Nöroloji</h4>
+                            <p>Sinir sistemi hastalıkları</p>
+                        </div>
+                        <div class="specialty-card" data-specialty="dermatoloji" onclick="selectSpecialty('dermatoloji')">
+                            <div class="specialty-icon">🩺</div>
+                            <h4>Dermatoloji</h4>
+                            <p>Cilt hastalıkları uzmanı</p>
+                        </div>
+                        <div class="specialty-card" data-specialty="psikiyatri" onclick="selectSpecialty('psikiyatri')">
+                            <div class="specialty-icon">🧘</div>
+                            <h4>Psikiyatri</h4>
+                            <p>Ruh sağlığı uzmanı</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adım 2: Doktor Seçimi -->
+                <div class="form-step" id="step2">
+                    <h3>2. Doktor Seçiniz</h3>
+                    <div class="doctor-selection" id="doctorSelection">
+                        <p class="no-selection">Önce bir branş seçiniz</p>
+                    </div>
+                </div>
+
+                <!-- Adım 3: Tarih ve Saat -->
+                <div class="form-step" id="step3">
+                    <h3>3. Tarih ve Saat Seçiniz</h3>
+                    <div class="datetime-selection">
+                        <div class="date-selection">
+                            <label for="appointmentDate">Tarih Seçiniz:</label>
+                            <input type="date" id="appointmentDate" name="appointmentDate" min="" required>
+                        </div>
+                        <div class="time-selection">
+                            <label>Müsait Saatler:</label>
+                            <div class="time-slots">
+                                <button class="time-slot" data-time="09:00">09:00</button>
+                                <button class="time-slot" data-time="09:30">09:30</button>
+                                <button class="time-slot" data-time="10:00">10:00</button>
+                                <button class="time-slot" data-time="10:30">10:30</button>
+                                <button class="time-slot" data-time="11:00">11:00</button>
+                                <button class="time-slot" data-time="11:30">11:30</button>
+                                <button class="time-slot" data-time="14:00">14:00</button>
+                                <button class="time-slot" data-time="14:30">14:30</button>
+                                <button class="time-slot" data-time="15:00">15:00</button>
+                                <button class="time-slot" data-time="15:30">15:30</button>
+                                <button class="time-slot" data-time="16:00">16:00</button>
+                                <button class="time-slot" data-time="16:30">16:30</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Adım 4: Şikayet Bilgisi -->
+                <div class="form-step" id="step4">
+                    <h3>4. Şikayet Bilgisi</h3>
+                    <div class="personal-info">
+                        <div class="form-group">
+                            <label for="appointmentFor">Randevu Kimin İçin:</label>
+                            <select id="appointmentFor" name="appointmentFor" required onchange="toggleRelativeInfo()">
+                                <option value="">Seçiniz...</option>
+                                <option value="self">Kendim için</option>
+                                <option value="mother">Annem için</option>
+                                <option value="father">Babam için</option>
+                                <option value="daughter">Kızım için</option>
+                                <option value="son">Oğlum için</option>
+                            </select>
+                        </div>
+                        
+                        <!-- Yakın Kişi Bilgileri -->
+                        <div id="relativeInfo" class="relative-info" style="display: none;">
+                            <h4>👨‍👩‍👧‍👦 Yakın Kişi Bilgileri</h4>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="relativeName">Ad Soyad:</label>
+                                    <input type="text" id="relativeName" name="relativeName" placeholder="Ad Soyad giriniz">
+                                </div>
+                                <div class="form-group">
+                                    <label for="relativeTc">TC Kimlik No:</label>
+                                    <input type="text" id="relativeTc" name="relativeTc" placeholder="TC Kimlik No giriniz" maxlength="11">
+                                </div>
+                            </div>
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label for="relativePhone">Telefon:</label>
+                                    <input type="tel" id="relativePhone" name="relativePhone" placeholder="Telefon numarası giriniz">
+                                </div>
+                                <div class="form-group">
+                                    <label for="relativeEmail">E-posta:</label>
+                                    <input type="email" id="relativeEmail" name="relativeEmail" placeholder="E-posta adresi giriniz">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label for="complaint">Şikayetiniz:</label>
+                            <textarea id="complaint" name="complaint" rows="4" placeholder="Şikayetinizi kısaca açıklayınız..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Form Butonları -->
+                <div class="form-buttons">
+                    <button type="button" class="btn btn-secondary" id="prevBtn" onclick="changeStep(-1)" style="display: none;">Geri</button>
+                    <button type="button" class="btn btn-primary" id="nextBtn" onclick="changeStep(1)">İleri</button>
+                    <button type="button" class="btn btn-success" id="submitBtn" onclick="submitAppointment()" style="display: none;">Randevu Al</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Başarı Mesajı Container -->
+    <div class="success-container" id="successContainer" style="display: none;">
+        <div class="success-card">
+            <div class="success-icon">
+                <span class="checkmark">✅</span>
+            </div>
+            <h2 class="success-title">Randevunuz Başarıyla Alındı!</h2>
+            <p class="success-message">Randevu detaylarınız aşağıda yer almaktadır.</p>
+            
+            <!-- Randevu Detayları -->
+            <div class="appointment-details">
+                <h3>📋 Randevu Detayları</h3>
+                <div class="detail-grid">
+                    <div class="detail-item">
+                        <span class="detail-label">👨‍⚕️ Doktor:</span>
+                        <span class="detail-value" id="successDoctorName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">📅 Tarih:</span>
+                        <span class="detail-value" id="successAppointmentDate">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">🕐 Saat:</span>
+                        <span class="detail-value" id="successAppointmentTime">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">👤 Hasta:</span>
+                        <span class="detail-value" id="successPatientName">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">👨‍👩‍👧‍👦 Randevu Kimin İçin:</span>
+                        <span class="detail-value" id="successAppointmentFor">-</span>
+                    </div>
+                    <div class="detail-item">
+                        <span class="detail-label">🆔 Randevu ID:</span>
+                        <span class="detail-value" id="successAppointmentId">-</span>
+                    </div>
+                </div>
+                
+                <!-- Yakın Kişi Bilgileri (sadece başka biri için randevu alındığında gösterilir) -->
+                <div id="successRelativeInfo" class="relative-info-success" style="display: none;">
+                    <h3>👨‍👩‍👧‍👦 Yakın Kişi Bilgileri</h3>
+                    <div class="detail-grid">
+                        <div class="detail-item">
+                            <span class="detail-label">👤 Ad Soyad:</span>
+                            <span class="detail-value" id="successRelativeName">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">🆔 TC Kimlik No:</span>
+                            <span class="detail-value" id="successRelativeTc">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">📞 Telefon:</span>
+                            <span class="detail-value" id="successRelativePhone">-</span>
+                        </div>
+                        <div class="detail-item">
+                            <span class="detail-label">📧 E-posta:</span>
+                            <span class="detail-value" id="successRelativeEmail">-</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Aksiyon Butonları -->
+            <div class="success-actions">
+                <button type="button" class="btn btn-primary" onclick="window.location.href='randevularim.html'">
+                    📋 Randevularımı Görüntüle
+                </button>
+                <button type="button" class="btn btn-secondary" onclick="newAppointment()">
+                    📅 Yeni Randevu Al
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Mesaj Container -->
+    <div class="message-container" id="messageContainer" style="display: none;">
+        <div class="message-card">
+            <div class="message-icon" id="messageIcon">
+                <span id="messageIconText">✅</span>
+            </div>
+            <h3 class="message-title" id="messageTitle">Başarılı!</h3>
+            <p class="message-text" id="messageText">İşlem başarıyla tamamlandı.</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-left">
+                <div class="footer-logo">🏥</div>
+                <div class="footer-text">
+                    <strong>Korkmaz Bilişim Paketi</strong> ile yapılmıştır
+                </div>
+            </div>
+            <div class="footer-right">
+                <div class="footer-project">Hastane Randevu Sistemi</div>
+                <div class="footer-year">© 2025</div>
+            </div>
+        </div>
+    </footer>
+
+    <script src="main.js"></script>
+    <script>
+        let currentStep = 1;
+        let selectedSpecialty = '';
+        let selectedDoctor = '';
+        let selectedDoctorId = '';
+        let selectedDate = '';
+        let selectedTime = '';
+
+        // Doktor verileri - API'den yüklenecek
+        let doctors = {};
+
+        // Doktor verilerini API'den yükle
+        async function loadDoctors() {
+            try {
+                console.log('Doktorlar yükleniyor...');
+                const response = await fetch('/api/doctors');
+                console.log('API yanıtı:', response.status);
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                
+                const doctorsData = await response.json();
+                console.log('API\'den gelen veri:', doctorsData);
+                console.log('Veri tipi:', typeof doctorsData);
+                console.log('Array mi?', Array.isArray(doctorsData));
+                
+                // Doktorları branşlara göre grupla
+                doctors = {};
+                doctorsData.forEach((doctor, index) => {
+                    console.log(`Doktor ${index + 1} işleniyor:`, doctor);
+                    let specialty = doctor.specialty.toLowerCase();
+                    
+                    // Branş isimlerini HTML'deki data-specialty değerleriyle eşleştir
+                    if (specialty.includes('dahiliye')) {
+                        specialty = 'dahiliye';
+                    } else if (specialty.includes('kardiyoloji')) {
+                        specialty = 'kardiyoloji';
+                    } else if (specialty.includes('göz') || specialty.includes('goz')) {
+                        specialty = 'goz';
+                    } else if (specialty.includes('ortopedi')) {
+                        specialty = 'ortopedi';
+                    } else if (specialty.includes('nöroloji') || specialty.includes('noroloji')) {
+                        specialty = 'noroloji';
+                    } else if (specialty.includes('dermatoloji')) {
+                        specialty = 'dermatoloji';
+                    } else if (specialty.includes('psikiyatri')) {
+                        specialty = 'psikiyatri';
+                    }
+                    
+                    console.log('Branş:', specialty);
+                    if (!doctors[specialty]) {
+                        doctors[specialty] = [];
+                    }
+                    doctors[specialty].push({
+                        id: doctor.id,
+                        name: `Dr. ${doctor.firstName} ${doctor.lastName}`,
+                        experience: `${doctor.experienceYears} yıl`,
+                        university: doctor.university
+                    });
+                });
+                
+                console.log('Doktorlar yüklendi:', doctors);
+                console.log('Branşlar:', Object.keys(doctors));
+                console.log('Toplam doktor sayısı:', doctorsData.length);
+            } catch (error) {
+                console.error('Doktorlar yüklenirken hata:', error);
+                console.error('Hata detayı:', error.stack);
+                alert('Doktorlar yüklenirken bir hata oluştu: ' + error.message);
+            }
+        }
+
+        // Branş seçimi
+        function selectSpecialty(specialty) {
+            selectedSpecialty = specialty;
+            
+            // Tüm branş kartlarından seçili class'ını kaldır
+            document.querySelectorAll('.specialty-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Seçilen branş kartına seçili class'ını ekle
+            document.querySelector(`[data-specialty="${specialty}"]`).classList.add('selected');
+            
+            // Doktor listesini güncelle
+            updateDoctorList(specialty);
+            
+            // İleri butonunu aktif et
+            document.getElementById('nextBtn').disabled = false;
+        }
+
+        // Doktor listesini güncelle
+        function updateDoctorList(specialty) {
+            const doctorSelection = document.getElementById('doctorSelection');
+            const specialtyDoctors = doctors[specialty] || [];
+            
+            if (specialtyDoctors.length === 0) {
+                doctorSelection.innerHTML = '<p class="no-selection">Bu branşta doktor bulunmamaktadır.</p>';
+                return;
+            }
+            
+            let html = '<div class="doctors-grid">';
+            specialtyDoctors.forEach(doctor => {
+                html += `
+                    <div class="doctor-card" data-doctor-id="${doctor.id}" onclick="selectDoctor(${doctor.id}, '${doctor.name}')" style="cursor: pointer;">
+                        <div class="doctor-avatar">👨‍⚕️</div>
+                        <h3 class="doctor-name">${doctor.name}</h3>
+                        <p class="doctor-specialty">${specialty.charAt(0).toUpperCase() + specialty.slice(1)} Uzmanı</p>
+                        <div class="doctor-info">
+                            <p>${doctor.experience} deneyim</p>
+                            <p>${doctor.university}</p>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div>';
+            
+            doctorSelection.innerHTML = html;
+        }
+
+
+        // Adım değiştirme
+        function changeStep(direction) {
+            const steps = document.querySelectorAll('.form-step');
+            const doctorName = getUrlParameter('doctor');
+            
+            if (direction === 1) {
+                // İleri git
+                if (currentStep === 1 && !selectedSpecialty) {
+                    // 1. adımda branş seçimi yapılmamışsa uyarı ver
+                    alert('Lütfen önce bir branş seçiniz!');
+                    return;
+                }
+                
+                if (currentStep === 2 && !selectedDoctorId) {
+                    // 2. adımda doktor seçimi yapılmamışsa uyarı ver
+                    alert('Lütfen önce bir doktor seçiniz!');
+                    return;
+                }
+                
+                if (currentStep < steps.length) {
+                    steps[currentStep - 1].classList.remove('active');
+                    currentStep++;
+                    steps[currentStep - 1].classList.add('active');
+                }
+            } else {
+                // Geri git
+                if (currentStep > 1) {
+                    steps[currentStep - 1].classList.remove('active');
+                    currentStep--;
+                    steps[currentStep - 1].classList.add('active');
+                    
+                    // Eğer URL'den gelen doktor varsa, geri butonuna basıldığında doktor sayfasına dön
+                    if (doctorName && currentStep === 2) {
+                        window.location.href = 'doktor.html';
+                        return;
+                    }
+                }
+            }
+            
+            updateButtons();
+        }
+
+        // Butonları güncelle
+        function updateButtons() {
+            const prevBtn = document.getElementById('prevBtn');
+            const nextBtn = document.getElementById('nextBtn');
+            const submitBtn = document.getElementById('submitBtn');
+            
+            // Geri butonu
+            prevBtn.style.display = currentStep > 1 ? 'block' : 'none';
+            
+            // İleri/Submit butonu
+            if (currentStep < 4) {
+                nextBtn.style.display = 'block';
+                submitBtn.style.display = 'none';
+            } else {
+                nextBtn.style.display = 'none';
+                submitBtn.style.display = 'block';
+            }
+        }
+
+        // Tüm saatleri yükle (müsait ve dolu)
+        async function loadAvailableTimes(doctorId, date) {
+            try {
+                console.log('API çağrısı yapılıyor:', `/api/appointments/all-times/${doctorId}/${date}`);
+                const response = await fetch(`/api/appointments/all-times/${doctorId}/${date}`);
+                console.log('API yanıtı:', response.status);
+                const timeSlots = await response.json();
+                console.log('Saat slotları:', timeSlots);
+                
+                const timeSlotsContainer = document.querySelector('.time-slots');
+                timeSlotsContainer.innerHTML = '';
+                
+                if (timeSlots.length === 0) {
+                    timeSlotsContainer.innerHTML = '<p style="color: #e74c3c; text-align: center; padding: 20px;">Bu tarih için saat bulunmamaktadır.</p>';
+                    return;
+                }
+                
+                // Bugünün tarihini al
+                const today = new Date();
+                const selectedDate = new Date(date);
+                const isToday = today.toDateString() === selectedDate.toDateString();
+                const currentHour = today.getHours();
+                const currentMinute = today.getMinutes();
+                
+                timeSlots.forEach(slot => {
+                    const timeSlot = document.createElement('button');
+                    timeSlot.className = 'time-slot';
+                    timeSlot.setAttribute('data-time', slot.time);
+                    timeSlot.textContent = slot.time;
+                    
+                    // Saat formatını parse et (HH:MM)
+                    const [slotHour, slotMinute] = slot.time.split(':').map(Number);
+                    const slotTimeInMinutes = slotHour * 60 + slotMinute;
+                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                    
+                    // Geçmiş saat kontrolü
+                    const isPastTime = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+                    
+                    if (slot.available && !isPastTime) {
+                        // Müsait saat - tıklanabilir
+                        timeSlot.style.backgroundColor = '#4CAF50';
+                        timeSlot.style.color = 'white';
+                        timeSlot.addEventListener('click', function() {
+                            selectTimeSlot(this);
+                        });
+                    } else if (isPastTime) {
+                        // Geçmiş saat - tıklanamaz
+                        timeSlot.style.backgroundColor = '#9E9E9E';
+                        timeSlot.style.color = 'white';
+                        timeSlot.style.cursor = 'not-allowed';
+                        timeSlot.title = 'Bu saat geçmiş';
+                        timeSlot.disabled = true;
+                    } else {
+                        // Dolu saat - tıklanamaz
+                        timeSlot.style.backgroundColor = '#f44336';
+                        timeSlot.style.color = 'white';
+                        timeSlot.style.cursor = 'not-allowed';
+                        timeSlot.title = 'Bu saat dolu';
+                        timeSlot.disabled = true;
+                    }
+                    
+                    timeSlotsContainer.appendChild(timeSlot);
+                });
+                
+            } catch (error) {
+                console.error('Saatler yüklenirken hata:', error);
+                alert('Saatler yüklenirken bir hata oluştu.');
+            }
+        }
+        
+        // Randevu gönderme
+        async function submitAppointment() {
+            // Kullanıcı bilgilerini localStorage'dan al
+            const storedUser = localStorage.getItem('user');
+            if (!storedUser) {
+                alert('Kullanıcı bilgisi bulunamadı. Lütfen tekrar giriş yapın.');
+                window.location.href = 'giris.html';
+                return;
+            }
+            
+            const user = JSON.parse(storedUser);
+            
+            const appointmentFor = document.getElementById('appointmentFor').value;
+            
+            const formData = {
+                doctorId: selectedDoctorId,
+                patientName: user.fullName,
+                patientPhone: user.phone,
+                patientEmail: user.email,
+                patientTc: user.tcNo,
+                appointmentDate: document.getElementById('appointmentDate').value,
+                appointmentTime: selectedTime,
+                complaint: document.getElementById('complaint').value,
+                appointmentFor: appointmentFor
+            };
+            
+            // Eğer başka biri için randevu alınıyorsa, o kişinin bilgilerini ekle
+            if (appointmentFor && appointmentFor !== 'self') {
+                formData.relativeName = document.getElementById('relativeName').value;
+                formData.relativeTc = document.getElementById('relativeTc').value;
+                formData.relativePhone = document.getElementById('relativePhone').value;
+                formData.relativeEmail = document.getElementById('relativeEmail').value;
+            }
+            
+            // Basit validasyon
+                if (!selectedDoctorId || !selectedTime) {
+                    showMessage('warning', 'Eksik Bilgi', 'Lütfen doktor ve saat seçimi yapınız.');
+                    return;
+                }
+                
+                if (!formData.appointmentDate) {
+                    showMessage('warning', 'Eksik Bilgi', 'Lütfen tarih seçiniz.');
+                    return;
+                }
+                
+                if (!formData.appointmentFor) {
+                    showMessage('warning', 'Eksik Bilgi', 'Lütfen randevu kimin için olduğunu seçiniz.');
+                    return;
+                }
+            
+            // Eğer başka biri için randevu alınıyorsa, o kişinin bilgilerini kontrol et
+            if (appointmentFor && appointmentFor !== 'self') {
+                if (!formData.relativeName || !formData.relativeTc || !formData.relativePhone || !formData.relativeEmail) {
+                    showMessage('warning', 'Eksik Bilgi', 'Lütfen yakın kişinin tüm bilgilerini doldurunuz.');
+                    return;
+                }
+                
+                // TC Kimlik No kontrolü
+                if (formData.relativeTc.length !== 11 || !/^\d+$/.test(formData.relativeTc)) {
+                    showMessage('error', 'TC Kimlik No Hatası', 'Lütfen geçerli bir TC Kimlik No giriniz (11 haneli).');
+                    return;
+                }
+                
+                // E-posta kontrolü
+                const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+                if (!emailRegex.test(formData.relativeEmail)) {
+                    showMessage('error', 'E-posta Hatası', 'Lütfen geçerli bir e-posta adresi giriniz.');
+                    return;
+                }
+            }
+            
+            try {
+                const response = await fetch('/api/appointments', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+                
+                if (response.ok) {
+                    const appointment = await response.json();
+                    
+                    // Başarı mesajı verilerini doldur
+                    document.getElementById('successDoctorName').textContent = selectedDoctor;
+                    document.getElementById('successAppointmentDate').textContent = formData.appointmentDate;
+                    document.getElementById('successAppointmentTime').textContent = formData.appointmentTime;
+                    document.getElementById('successPatientName').textContent = formData.patientName;
+                    
+                    // Yakınlık derecesi bilgisini formatla
+                    const appointmentForText = getAppointmentForText(formData.appointmentFor);
+                    document.getElementById('successAppointmentFor').textContent = appointmentForText;
+                    
+                    // Eğer başka biri için randevu alındıysa, yakın kişi bilgilerini göster
+                    if (appointmentFor && appointmentFor !== 'self') {
+                        document.getElementById('successRelativeInfo').style.display = 'block';
+                        document.getElementById('successRelativeName').textContent = formData.relativeName;
+                        document.getElementById('successRelativeTc').textContent = formData.relativeTc;
+                        document.getElementById('successRelativePhone').textContent = formData.relativePhone;
+                        document.getElementById('successRelativeEmail').textContent = formData.relativeEmail;
+                    } else {
+                        document.getElementById('successRelativeInfo').style.display = 'none';
+                    }
+                    
+                    document.getElementById('successAppointmentId').textContent = appointment.id;
+                    
+                    // Formu gizle ve başarı mesajını göster
+                    document.querySelector('.appointment-form-container').style.display = 'none';
+                    document.getElementById('successContainer').style.display = 'flex';
+                    
+                    // Sayfayı başarı mesajına kaydır
+                    document.getElementById('successContainer').scrollIntoView({ 
+                        behavior: 'smooth' 
+                    });
+                    
+                } else {
+                    const errorText = await response.text();
+                    alert('Randevu alınırken hata oluştu: ' + errorText);
+                }
+                
+            } catch (error) {
+                console.error('Randevu gönderilirken hata:', error);
+                alert('Randevu gönderilirken bir hata oluştu.');
+            }
+        }
+
+        // Doktor seçimi
+        function selectDoctor(doctorId, doctorName) {
+            selectedDoctorId = doctorId;
+            selectedDoctor = doctorName;
+            
+            // Tüm doktor kartlarından seçili class'ını kaldır
+            document.querySelectorAll('.doctor-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            
+            // Seçilen doktor kartına seçili class'ını ekle
+            const selectedCard = document.querySelector(`[data-doctor-id="${doctorId}"]`);
+            if (selectedCard) {
+                selectedCard.classList.add('selected');
+            }
+            
+            // İleri butonunu aktif et
+            document.getElementById('nextBtn').disabled = false;
+            
+            console.log('Seçilen doktor:', doctorName, 'ID:', doctorId);
+            
+            // Tarih seçildiğinde müsait saatleri yükle
+            const dateInput = document.getElementById('appointmentDate');
+            dateInput.addEventListener('change', function() {
+                if (this.value && selectedDoctorId) {
+                    // Tarih formatını kontrol et ve düzelt
+                    let dateValue = this.value;
+                    console.log('Seçilen tarih:', dateValue);
+                    console.log('Doktor ID:', selectedDoctorId);
+                    
+                    // Tarih formatını YYYY-MM-DD'ye çevir
+                    if (dateValue.includes('.')) {
+                        // DD.MM.YYYY formatından YYYY-MM-DD'ye çevir
+                        const parts = dateValue.split('.');
+                        if (parts.length === 3) {
+                            dateValue = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        }
+                    } else if (dateValue.includes('/')) {
+                        // DD/MM/YYYY formatından YYYY-MM-DD'ye çevir
+                        const parts = dateValue.split('/');
+                        if (parts.length === 3) {
+                            dateValue = `${parts[2]}-${parts[1].padStart(2, '0')}-${parts[0].padStart(2, '0')}`;
+                        }
+                    } else if (dateValue.includes('-') && dateValue.length === 10) {
+                        // Zaten YYYY-MM-DD formatında
+                        console.log('Tarih zaten doğru formatta:', dateValue);
+                    } else {
+                        // Diğer formatlar için Date objesi kullan
+                        try {
+                            const date = new Date(dateValue);
+                            if (!isNaN(date.getTime())) {
+                                dateValue = date.toISOString().split('T')[0];
+                            }
+                        } catch (e) {
+                            console.error('Tarih formatı düzeltilemedi:', dateValue);
+                        }
+                    }
+                    
+                    console.log('Düzeltilmiş tarih formatı:', dateValue);
+                    
+                    console.log('Düzeltilmiş tarih:', dateValue);
+                    loadAvailableTimes(selectedDoctorId, dateValue);
+                }
+            });
+        }
+        
+
+        // URL parametrelerini oku
+        function getUrlParameter(name) {
+            const urlParams = new URLSearchParams(window.location.search);
+            return urlParams.get(name);
+        }
+
+        // Doktor adından branş bulma
+        function getSpecialtyFromDoctorName(doctorName) {
+            // Doktor adından branş bilgisini çıkarmak için doktor verilerini kullan
+            const specialtyMap = {
+                'Dr. Ahmet Yılmaz': 'dahiliye',
+                'Dr. Fatma Demir': 'dahiliye',
+                'Dr. Mehmet Kaya': 'dahiliye',
+                'Dr. Ayşe Özkan': 'dahiliye',
+                'Dr. Mustafa Çelik': 'kardiyoloji',
+                'Dr. Zeynep Arslan': 'kardiyoloji',
+                'Dr. Emre Şahin': 'kardiyoloji',
+                'Dr. Sibel Yıldız': 'kardiyoloji',
+                'Dr. Ali Veli': 'goz',
+                'Dr. Elif Korkmaz': 'goz',
+                'Dr. Burak Öztürk': 'goz',
+                'Dr. Gülay Aktaş': 'goz',
+                'Dr. Cem Yılmaz': 'ortopedi',
+                'Dr. Deniz Özkan': 'ortopedi',
+                'Dr. Hakan Demir': 'noroloji',
+                'Dr. İpek Kaya': 'noroloji',
+                'Dr. Murat Şahin': 'dermatoloji',
+                'Dr. Özlem Arslan': 'dermatoloji',
+                'Dr. Serkan Yıldız': 'psikiyatri',
+                'Dr. Tuğba Öztürk': 'psikiyatri'
+            };
+            return specialtyMap[doctorName] || '';
+        }
+
+        // URL'den gelen doktor bilgilerini işle
+        function handleUrlParameters() {
+            const doctorName = getUrlParameter('doctor');
+            if (doctorName) {
+                console.log('URL\'den gelen doktor:', doctorName);
+                
+                // Doktor adından branş bul
+                const specialty = getSpecialtyFromDoctorName(doctorName);
+                if (specialty) {
+                    console.log('Bulunan branş:', specialty);
+                    
+                    // Direkt olarak 1. ve 2. adımları gizle
+                    document.getElementById('step1').style.display = 'none';
+                    document.getElementById('step2').style.display = 'none';
+                    
+                    // 3. adımı aktif yap
+                    currentStep = 3;
+                    document.getElementById('step3').classList.add('active');
+                    
+                    // Butonları güncelle
+                    updateButtons();
+                    
+                    // Doktor bilgisini 3. adımda göster
+                    const step3Title = document.querySelector('#step3 h3');
+                    step3Title.innerHTML = `3. Tarih ve Saat Seçiniz - ${doctorName}`;
+                    
+                    // Branş ve doktor seçimini arka planda yap (görünmez)
+                    setTimeout(() => {
+                        selectSpecialty(specialty);
+                        
+                        // Doktor seçimini otomatik yap
+                        setTimeout(() => {
+                            const doctorCards = document.querySelectorAll('.doctor-card');
+                            doctorCards.forEach(card => {
+                                const cardDoctorName = card.querySelector('.doctor-name').textContent;
+                                if (cardDoctorName === doctorName) {
+                                    const doctorId = card.getAttribute('data-doctor-id');
+                                    if (doctorId) {
+                                        selectDoctor(doctorId, doctorName);
+                                    }
+                                }
+                            });
+                        }, 500);
+                    }, 100);
+                }
+            }
+        }
+
+        // Tarih seçildiğinde saat butonlarını güncelle
+        function updateTimeSlotsForDate(selectedDate) {
+            // Tüm saat butonlarını temizle
+            document.querySelectorAll('.time-slot').forEach(button => {
+                button.className = 'time-slot';
+                button.disabled = false;
+                button.title = '';
+                button.removeEventListener('click', selectTimeSlot);
+            });
+            
+            // Bugünün tarihini al
+            const today = new Date();
+            const selectedDateObj = new Date(selectedDate);
+            const isToday = today.toDateString() === selectedDateObj.toDateString();
+            const currentHour = today.getHours();
+            const currentMinute = today.getMinutes();
+            const currentTimeInMinutes = currentHour * 60 + currentMinute;
+            
+            // Her saat butonu için durumu belirle
+            document.querySelectorAll('.time-slot').forEach(button => {
+                const time = button.getAttribute('data-time');
+                
+                // Saat formatını parse et (HH:MM)
+                const [slotHour, slotMinute] = time.split(':').map(Number);
+                const slotTimeInMinutes = slotHour * 60 + slotMinute;
+                
+                // Geçmiş saat kontrolü (sadece bugün için)
+                const isPastTime = isToday && slotTimeInMinutes <= currentTimeInMinutes;
+                
+                if (isPastTime) {
+                    // Geçmiş saat - gri
+                    button.classList.add('past');
+                    button.disabled = true;
+                    button.title = 'Bu saat geçmiş';
+                } else {
+                    // Müsait saat - yeşil (varsayılan olarak tüm saatler müsait)
+                    button.classList.add('available');
+                    button.addEventListener('click', function() {
+                        selectTimeSlot(this);
+                    });
+                }
+            });
+        }
+
+        // Saat seçimi fonksiyonu
+        function selectTimeSlot(button) {
+            // Tüm saat butonlarından seçili class'ını kaldır
+            document.querySelectorAll('.time-slot').forEach(slot => {
+                slot.classList.remove('selected');
+            });
+            
+            // Seçilen butona seçili class'ını ekle
+            button.classList.add('selected');
+            selectedTime = button.getAttribute('data-time');
+            
+            console.log('Seçilen saat:', selectedTime);
+        }
+
+        // Sayfa yüklendiğinde
+        document.addEventListener('DOMContentLoaded', function() {
+            // Önce URL parametrelerini kontrol et
+            const doctorName = getUrlParameter('doctor');
+            
+            // Bugünden itibaren tarih seçimi
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('appointmentDate').min = today;
+            
+            // Tarih seçildiğinde saat butonlarını güncelle
+            document.getElementById('appointmentDate').addEventListener('change', function() {
+                if (this.value) {
+                    updateTimeSlotsForDate(this.value);
+                } else {
+                    // Tarih seçimi kaldırıldığında saat butonlarını nötr duruma getir
+                    document.querySelectorAll('.time-slot').forEach(button => {
+                        button.className = 'time-slot neutral';
+                        button.disabled = true;
+                        button.title = 'Önce tarih seçiniz';
+                    });
+                }
+            });
+            
+            // Statik saat butonlarını başlangıçta nötr durumda bırak
+            document.querySelectorAll('.time-slot').forEach(button => {
+                // Başlangıçta tüm butonları nötr durumda bırak
+                button.classList.add('neutral');
+                button.disabled = true;
+                button.title = 'Önce tarih seçiniz';
+            });
+            
+            // Eğer URL'den doktor geliyorsa direkt tarih/saat adımına git
+            if (doctorName) {
+                // 1. ve 2. adımları hemen gizle
+                document.getElementById('step1').style.display = 'none';
+                document.getElementById('step2').style.display = 'none';
+                
+                // 3. adımı aktif yap
+                currentStep = 3;
+                document.getElementById('step3').classList.add('active');
+                
+                // Butonları güncelle
+                updateButtons();
+                
+                // Doktor bilgisini 3. adımda göster
+                const step3Title = document.querySelector('#step3 h3');
+                step3Title.innerHTML = `3. Tarih ve Saat Seçiniz - ${doctorName}`;
+            } else {
+                // URL'den doktor gelmiyorsa İleri butonunu devre dışı bırak
+                document.getElementById('nextBtn').disabled = true;
+            }
+            
+            // Doktor verilerini yükle
+            loadDoctors();
+            
+            // URL parametrelerini işle (arka planda)
+            handleUrlParameters();
+            
+            // TC Kimlik No sadece rakam girişi
+            document.getElementById('relativeTc').addEventListener('input', function(e) {
+                e.target.value = e.target.value.replace(/[^0-9]/g, '');
+            });
+        });
+
+        // Yeni randevu al butonu için fonksiyon
+        function newAppointment() {
+            // Başarı mesajını gizle ve formu göster
+            document.getElementById('successContainer').style.display = 'none';
+            document.querySelector('.appointment-form-container').style.display = 'block';
+            
+            // Formu sıfırla
+            currentStep = 1;
+            selectedSpecialty = '';
+            selectedDoctor = '';
+            selectedDoctorId = '';
+            selectedTime = '';
+            
+            // Tüm adımları gizle, ilk adımı göster
+            document.querySelectorAll('.form-step').forEach(step => {
+                step.classList.remove('active');
+            });
+            document.getElementById('step1').classList.add('active');
+            
+            // Butonları güncelle
+            updateButtons();
+            
+            // Form alanlarını temizle
+            document.getElementById('appointmentDate').value = '';
+            document.getElementById('complaint').value = '';
+            
+            // Saat butonlarını nötr duruma getir
+            document.querySelectorAll('.time-slot').forEach(button => {
+                button.className = 'time-slot neutral';
+                button.disabled = true;
+                button.title = 'Önce tarih seçiniz';
+            });
+            
+            // Sayfayı form başına kaydır
+            document.querySelector('.appointment-form-container').scrollIntoView({ 
+                behavior: 'smooth' 
+            });
+        }
+
+        // Yakınlık derecesi metnini al
+        function getAppointmentForText(value) {
+            switch(value) {
+                case 'self': return 'Kendim için';
+                case 'mother': return 'Annem için';
+                case 'father': return 'Babam için';
+                case 'daughter': return 'Kızım için';
+                case 'son': return 'Oğlum için';
+                default: return value;
+            }
+        }
+
+        // Yakın kişi bilgileri formunu göster/gizle
+        function toggleRelativeInfo() {
+            const appointmentFor = document.getElementById('appointmentFor').value;
+            const relativeInfo = document.getElementById('relativeInfo');
+            
+            if (appointmentFor && appointmentFor !== 'self') {
+                relativeInfo.style.display = 'block';
+                // Zorunlu alanları işaretle
+                document.getElementById('relativeName').required = true;
+                document.getElementById('relativeTc').required = true;
+                document.getElementById('relativePhone').required = true;
+                document.getElementById('relativeEmail').required = true;
+            } else {
+                relativeInfo.style.display = 'none';
+                // Zorunlu alanları kaldır
+                document.getElementById('relativeName').required = false;
+                document.getElementById('relativeTc').required = false;
+                document.getElementById('relativePhone').required = false;
+                document.getElementById('relativeEmail').required = false;
+                // Alanları temizle
+                document.getElementById('relativeName').value = '';
+                document.getElementById('relativeTc').value = '';
+                document.getElementById('relativePhone').value = '';
+                document.getElementById('relativeEmail').value = '';
+            }
+        }
+
+        // Mesaj gösterme fonksiyonu
+        function showMessage(type, title, text) {
+            const messageContainer = document.getElementById('messageContainer');
+            const messageIcon = document.getElementById('messageIconText');
+            const messageTitle = document.getElementById('messageTitle');
+            const messageText = document.getElementById('messageText');
+            
+            // Mesaj tipine göre ikon ve stil ayarla
+            if (type === 'success') {
+                messageIcon.textContent = '✅';
+                messageContainer.className = 'message-container success';
+            } else if (type === 'error') {
+                messageIcon.textContent = '❌';
+                messageContainer.className = 'message-container error';
+            } else if (type === 'warning') {
+                messageIcon.textContent = '⚠️';
+                messageContainer.className = 'message-container warning';
+            } else if (type === 'info') {
+                messageIcon.textContent = 'ℹ️';
+                messageContainer.className = 'message-container info';
+            }
+            
+            // Mesaj içeriğini ayarla
+            messageTitle.textContent = title;
+            messageText.textContent = text;
+            
+            // Mesajı göster
+            messageContainer.style.display = 'flex';
+            
+            // Hata ve uyarı mesajları için 3 saniye sonra otomatik kapat
+            if (type === 'error' || type === 'warning') {
+                setTimeout(() => {
+                    messageContainer.style.display = 'none';
+                }, 3000);
+            }
+        }
+    </script>
+</body>
+</html>
