@@ -205,6 +205,7 @@ Bu proje açık kaynak olarak geliştirilmektedir. Katkılarınızı bekliyoruz!
 
 **⭐ Bu projeyi beğendiyseniz star vermeyi unutmayın! ⭐**
 
-Made with ❤️ by [Dicle Nur Korkmaz](https://github.com/Diclenurkorkmaz)
+Made with ❤️ by [Diclenur Korkmaz](https://github.com/diclenurkorkmaz-gif)
 
 </div>
+
